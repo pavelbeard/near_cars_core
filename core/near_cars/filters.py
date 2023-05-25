@@ -56,18 +56,18 @@ class PayloadFilter(django_filters.FilterSet):
             point1 = (payload.location_pickup.latitude, payload.location_pickup.longitude)
 
             cars_count = 0
-            d = None
+            car_distances = []
             for car in models.Car.objects.all():
                 location_pickup_distance = distance(point1, (car.location.latitude, car.location.longitude)).miles
 
                 if location_pickup_distance <= float(value):
                     cars_count += 1
-                    d = location_pickup_distance
+                    car_distances.append(location_pickup_distance)
 
             new_payload = deepcopy(payload)
 
-            if not d == 0.0 and not cars_count == 0:
-                new_payload.distance = d
+            if not len(car_distances) == 0 and not cars_count == 0:
+                new_payload.car_distances = car_distances
                 new_payload.cars_count = cars_count
                 filtered_qs.append(new_payload)
 

@@ -52,7 +52,7 @@ class PayloadViewset(viewsets.ModelViewSet):
                 'location_carry_on': o.location_carry_on.zip_code,
                 'weight': o.weight,
                 'description': o.description,
-                'distance': getattr(o, 'distance', 0),
+                'car_distances': getattr(o, 'car_distances', []),
                 'cars_count': getattr(o, 'cars_count', 0)
             })
 
