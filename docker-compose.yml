@@ -1,0 +1,60 @@
+version: '3.9'
+
+services:
+  redis:
+    image: redis:alpine3.16
+    container_name: redis
+    restart: always
+
+  db:
+    image: postgres:15.1-alpine3.16
+    container_name: db
+    volumes:
+      - db.vol:/var/lib/postgresql/data
+    env_file:
+      - psql.env
+
+  nginx:
+    build:
+      context: nginx
+      dockerfile: Dockerfile
+    container_name: nginx
+    ports:
+      - "8000:80"
+    volumes:
+      - core_app.vol:/home/core_app/staticfiles/
+    restart: always
+
+  worker:
+    build:
+      context: core
+      dockerfile: worker.Dockerfile
+    container_name: worker
+    depends_on:
+      - redis
+    env_file:
+      - worker.env
+    command: ["celery", "-A", "core", "worker", "-l", "info"]
+#    command: ["python3.11", "-c", "while True: pass"]
+    restart: always
+
+  api:
+    build:
+      context: core
+      dockerfile: Dockerfile
+    container_name: api-lvl1
+    depends_on:
+      - worker
+      - db
+    volumes:
+      - core_app.vol:/home/core_app/staticfiles/
+    env_file:
+      - core.env
+    entrypoint: ["python3.11", "/home/core_app/entrypoint.py"]
+#    command: ["python3.11", "-c", "while True: pass"]
+    restart: always
+
+
+volumes:
+  core_app.vol:
+  db.vol:
