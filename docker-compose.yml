@@ -34,7 +34,9 @@ services:
       - redis
     env_file:
       - worker.env
-    command: ["celery", "-A", "core", "worker", "-l", "info"]
+    command:
+        - "celery -A core worker -l info --detach"
+        - "celery -A core beat -l info -S django"
 #    command: ["python3.11", "-c", "while True: pass"]
     restart: always
 

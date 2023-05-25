@@ -6,19 +6,16 @@ from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from . import models
 from . import serializers
 from .doc_utils import PayloadResponseSerializer, PostParams, PostResponses
 
-db = "default" if settings.DEBUG else "near_cars"
-
 
 # Create your views here.
 
 class PayloadViewset(viewsets.ModelViewSet):
-    queryset = models.Payload.objects.using(db).all()
+    queryset = models.Payload.objects.all()
     serializer_class = serializers.PayloadSerializer
     permission_classes = (AllowAny,)
 
@@ -48,7 +45,7 @@ class PayloadViewset(viewsets.ModelViewSet):
 
             cars_count = []
 
-            for car in models.Car.objects.using(db).all():
+            for car in models.Car.objects.all():
                 point2 = (car.location.latitude, car.location.longitude)
 
                 if distance(point1, point2).miles <= 450:
@@ -70,7 +67,7 @@ class PayloadViewset(viewsets.ModelViewSet):
                    request=serializers.PayloadSerializer,
                    responses={201: PayloadResponseSerializer})
     def retrieve(self, request, *args, **kwargs):
-        payload = self.queryset.using(db).get(pk=int(kwargs.get('pk')))
+        payload = self.queryset.get(pk=int(kwargs.get('pk')))
         point1 = (payload.location_pickup.latitude, payload.location_pickup.longitude)
 
         serializer = self.serializer_class(data=model_to_dict(payload))
@@ -79,7 +76,7 @@ class PayloadViewset(viewsets.ModelViewSet):
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
         list_of_cars = []
-        for car in models.Car.objects.using(db).all():
+        for car in models.Car.objects.all():
             point2 = (car.location.latitude, car.location.longitude)
 
             list_of_cars.append({
@@ -91,7 +88,7 @@ class PayloadViewset(viewsets.ModelViewSet):
 
 
 class CarViewset(viewsets.ModelViewSet):
-    queryset = models.Car.objects.using(db).all()
+    queryset = models.Car.objects.all()
     serializer_class = serializers.CarSerializer
     permission_classes = (AllowAny,)
 
@@ -109,6 +106,6 @@ class CarViewset(viewsets.ModelViewSet):
 
 
 class LocationView(viewsets.ModelViewSet):
-    queryset = models.Location.objects.using(db).all()
+    queryset = models.Location.objects.all()
     serializer_class = serializers.LocationSerializer
     permission_classes = (AllowAny, )

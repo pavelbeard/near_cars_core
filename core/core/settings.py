@@ -10,8 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
+from datetime import timedelta
 
 from pathlib import Path
+
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,6 +44,7 @@ INSTALLED_APPS = [
     # pip apps
     'rest_framework',
     'drf_spectacular',
+    'django_celery_beat',
     # my apps
     'checkdb',
     'service',
@@ -82,21 +86,24 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    },
-    'near_cars': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('DB_NAME', 'near_cars'),
-        'USER': os.getenv('DB_USER', 'near_cars_user'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'near_cars_password'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', 15432),
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': os.getenv('DB_NAME', 'near_cars'),
+            'USER': os.getenv('DB_USER', 'near_cars_user'),
+            'PASSWORD': os.getenv('DB_PASSWORD', 'near_cars_password'),
+            'HOST': os.getenv('DB_HOST', 'localhost'),
+            'PORT': os.getenv('DB_PORT', 15432),
+        }
+    }
 
 
 # Password validation
@@ -185,11 +192,13 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_RESULT_EXPIRES = 3600
 CELERY_TIMEZONE = TIME_ZONE
 
+# CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+
 # OPEN API
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Near cars", # название проекта
-    "VERSION": "0.0.5", # версия проекта
+    "VERSION": "0.0.7", # версия проекта
     "SERVE_INCLUDE_SCHEMA": False, # исключить эндпоинт /schema
     "SWAGGER_UI_SETTINGS": {
         "filter": True, # включить поиск по тегам

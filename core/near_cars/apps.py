@@ -10,3 +10,5 @@ class NearCarsConfig(AppConfig):
     def ready(self):
         current_app.send_task("near_cars.tasks.load_data_to_location_table")
         current_app.send_task("near_cars.tasks.load_cars")
+        current_app.send_task("near_cars.tasks.update_car_location")
+        current_app.send_task("near_cars.tasks.create_location_auto_update_task")

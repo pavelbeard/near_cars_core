@@ -99,5 +99,5 @@ class TestNearCars(TestCase):
     def test_get_payload_list(self):
         response = self.client.get(reverse("near_cars:create_payload"))
         print(response)
-        pass
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 

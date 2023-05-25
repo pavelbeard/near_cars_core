@@ -12,6 +12,9 @@ class Location(models.Model):
     longitude = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(180.0)])
     latitude = models.FloatField(validators=[MinValueValidator(-90.0), MaxValueValidator(90.0)])
 
+    def __str__(self):
+        return f"{self.state}/{self.city}/{self.zip_code}"
+
 
 class NearCarsUszip(models.Model):
     zip = models.IntegerField(primary_key=True)
@@ -43,6 +46,9 @@ class Car(models.Model):
     location = models.ForeignKey(Location, on_delete=models.SET_NULL, blank=True, null=True)
     carrying = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(1000)])
 
+    def __str__(self):
+        return f"Car {self.uuid}"
+
 
 class Payload(models.Model):
     # ZIP_CODES = get_all_zip_codes()
@@ -55,3 +61,6 @@ class Payload(models.Model):
                                           on_delete=models.SET_NULL, blank=True, null=True)
     weight = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(1000)])
     description = models.TextField()
+
+    def __str__(self):
+        return f"Payload {self.id}/{self.description}"

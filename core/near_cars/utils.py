@@ -5,8 +5,6 @@ from django.core.cache import cache
 
 from . import models
 
-db = "default" if settings.DEBUG else "near_cars"
-
 
 def car_id_generator():
     random_letter = chr(random.randint(65, 91))
@@ -19,7 +17,7 @@ def get_all_zip_codes():
     if not zip_codes:
         cache.set('zip_codes_for_choices',
                   tuple((f"{loc.state}/{loc.city}/{loc.zip_code}", loc.zip_code)
-                        for loc in models.Location.objects.using(db).all()),
+                        for loc in models.Location.objects.all()),
                   70 * 20)
         zip_codes = cache.get('zip_codes_for_choices')
 
@@ -30,7 +28,7 @@ def random_zip_code():
     zip_codes = cache.get('zip_codes')
     if not zip_codes:
         cache.set('zip_codes',
-                  tuple(location.zip_code for location in models.Location.objects.using(db).all()),
+                  tuple(location.zip_code for location in models.Location.objects.all()),
                   70 * 20)
         zip_codes = cache.get('zip_codes')
 
