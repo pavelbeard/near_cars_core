@@ -47,7 +47,7 @@ class Car(models.Model):
     carrying = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(1000)])
 
     def __str__(self):
-        return f"Car {self.uuid}"
+        return f"Car {self.uuid}/{self.location}"
 
 
 class Payload(models.Model):

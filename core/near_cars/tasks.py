@@ -79,7 +79,7 @@ def create_location_auto_update_task():
         interval, exists = IntervalSchedule.objects.get_or_create(every=10, period='seconds')
         task, exists = PeriodicTask.objects.get_or_create(
             name="Car location autoupdate",
-            task="update_car_location_repeat",
+            task="near_cars.tasks.update_car_location",
             interval=interval,
             start_time=timezone.now()
         )
@@ -87,10 +87,11 @@ def create_location_auto_update_task():
         print("the task already exists")
 
 
-@shared_task(name="update_car_location_repeat")
+@shared_task()
 def update_car_location():
     cache.set('location_count', models.Location.objects.all(), 70 * 20)
     locations = cache.get('location_count')
+    print(locations)
 
     if locations.count() > 0:
         for car in models.Car.objects.all():
