@@ -24,10 +24,12 @@ class LocationSerializer(serializers.ModelSerializer):
 class PayloadSerializer(serializers.ModelSerializer):
     location_pickup = serializers.PrimaryKeyRelatedField(queryset=models.Location.objects.using(db).all())
     location_carry_on = serializers.PrimaryKeyRelatedField(queryset=models.Location.objects.using(db).all())
+    distance = serializers.FloatField()
+    cars_count = serializers.IntegerField()
 
     class Meta:
         model = models.Payload
-        fields = ('location_pickup', 'location_carry_on', 'weight', 'description')
+        fields = ('location_pickup', 'location_carry_on', 'weight', 'description', 'distance', 'cars_count')
 
     def create(self, validated_data):
         location_pickup = validated_data.pop('location_pickup')

@@ -12,9 +12,9 @@ class LocationAdmin(admin.ModelAdmin):
 
 @admin.register(models.Car)
 class CarAdmin(admin.ModelAdmin):
-    pass
+    raw_id_fields = ('location',)
 
 
 @admin.register(models.Payload)
 class PayloadAdmin(admin.ModelAdmin):
-    pass
+    raw_id_fields = ('location_pickup', 'location_carry_on')

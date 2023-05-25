@@ -13,6 +13,7 @@ services:
       - db.vol:/var/lib/postgresql/data
     env_file:
       - psql.env
+    restart: always
 
   nginx:
     build:

@@ -13,6 +13,7 @@ from . import utils
 
 PATH_CSV = os.getenv('PATH_CSV', os.path.join(os.getcwd(), "core"))
 
+
 @shared_task
 def load_data_to_location_table():
     try:

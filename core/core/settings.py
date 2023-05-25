@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_spectacular',
     'django_celery_beat',
+    'django_filters',
     # my apps
     'checkdb',
     'service',
@@ -198,7 +199,7 @@ CELERY_TIMEZONE = TIME_ZONE
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Near cars", # название проекта
-    "VERSION": "0.0.7", # версия проекта
+    "VERSION": "0.7.0", # версия проекта
     "SERVE_INCLUDE_SCHEMA": False, # исключить эндпоинт /schema
     "SWAGGER_UI_SETTINGS": {
         "filter": True, # включить поиск по тегам

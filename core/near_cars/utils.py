@@ -2,6 +2,7 @@ import random
 
 from django.conf import settings
 from django.core.cache import cache
+from django.db.models.base import ModelBase
 
 from . import models
 
@@ -36,5 +37,16 @@ def random_zip_code():
     return zip_code
 
 
-def calculate_distance():
-    pass
+def list_to_qs(model, data):
+    if not isinstance(model, ModelBase):
+        raise ValueError(f"{model} must be be Model")
+
+    if not isinstance(data, list):
+        raise ValueError(f"{data} must be List Object")
+
+    pk_list = [obj.pk for obj in data]
+    qs = model.objects.filter(pk__in=pk_list)
+    qs._result_cache = data
+    return qs
+
+

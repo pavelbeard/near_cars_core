@@ -1,5 +1,7 @@
 from django.conf import settings
+from django.db.models import F
 from django.forms import model_to_dict
+from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from geopy.distance import distance
 from rest_framework import status
@@ -7,7 +9,7 @@ from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from . import models
+from . import models, filters
 from . import serializers
 from .doc_utils import PayloadResponseSerializer, PostParams, PostResponses
 
@@ -17,6 +19,8 @@ from .doc_utils import PayloadResponseSerializer, PostParams, PostResponses
 class PayloadViewset(viewsets.ModelViewSet):
     queryset = models.Payload.objects.all()
     serializer_class = serializers.PayloadSerializer
+    filter_backends = (DjangoFilterBackend, )
+    filterset_class = filters.PayloadFilter
     permission_classes = (AllowAny,)
 
     @extend_schema(summary="Создать груз",
@@ -39,28 +43,25 @@ class PayloadViewset(viewsets.ModelViewSet):
                    request=serializers.PayloadSerializer,
                    responses={201: PayloadResponseSerializer})
     def list(self, request, *args, **kwargs):
+        qs = self.filterset_class(request.query_params, self.get_queryset()).qs
         payload_list = []
-        for payload in self.queryset:
-            point1 = (payload.location_pickup.latitude, payload.location_pickup.longitude)
 
-            cars_count = []
-
-            for car in models.Car.objects.all():
-                point2 = (car.location.latitude, car.location.longitude)
-
-                if distance(point1, point2).miles <= 450:
-                    cars_count.append(True)
-
-            serializer = self.serializer_class(data=model_to_dict(payload))
-
-            if not serializer.is_valid():
-                return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
-
+        for o in qs:
             payload_list.append({
-                "payload": serializer.data, "cars_count_near": len(cars_count)
+                'location_pickup': o.location_pickup.zip_code,
+                'location_carry_on': o.location_carry_on.zip_code,
+                'weight': o.weight,
+                'description': o.description,
+                'distance': getattr(o, 'distance', 0),
+                'cars_count': getattr(o, 'cars_count', 0)
             })
 
-        return Response(payload_list, status.HTTP_200_OK)
+        serializer = self.serializer_class(data=payload_list, many=True)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+
+        return Response(serializer.data, status.HTTP_200_OK)
 
     @extend_schema(summary="Вывести конкретный груз, с расстоянием от всех машин, а также с их номерами",
                    tags=["near_cars/get"],
