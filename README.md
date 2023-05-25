@@ -34,7 +34,16 @@ SERVER_PORT: порт API
 </pre>
 <p>Для worker.env:</p>
 <pre>
-CELERY_BROKER_UR: адрес брокера сообщений, в данном проекте используется redis - redis://<адрес_брокера>/0
+DEBUG: как в core.env
+
+DB_NAME: имя базы данных
+DB_USER: пользователь БД
+DB_PASSWORD: пароль от БД
+DB_HOST: адрес БД
+DB_PORT: порт
+
+CACHE_LOCATION: адрес брокера сообщений, в данном проекте используется redis - redis://<адрес_брокера>/0
+CELERY_BROKER_UR: redis://<адрес_брокера>/0
 CELERY_RESULT_BACKEND: redis://<адрес_брокера>/0
 </pre>
 <p>Для psql.env:</p>

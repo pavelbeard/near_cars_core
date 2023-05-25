@@ -11,6 +11,7 @@ from django_celery_beat.models import IntervalSchedule, PeriodicTask
 from . import models
 from . import utils
 
+PATH_CSV = os.getenv('PATH_CSV', os.path.join(os.getcwd(), "core"))
 
 @shared_task
 def load_data_to_location_table():
@@ -18,7 +19,7 @@ def load_data_to_location_table():
         if models.Location.objects.count() > 0:
             return True
 
-        path = os.path.join(os.getcwd(), "core", "uszips.csv")
+        path = os.path.join(PATH_CSV, "uszips.csv")
         dataframe = pandas.read_csv(path)
 
         columns = ['city', 'state_name', 'zip', 'lat', 'lng']
@@ -46,7 +47,7 @@ def load_cars():
     try:
         if models.Car.objects.count() > 0:
             return True
-        path = os.path.join(os.getcwd(), "core", "near_cars_car.csv")
+        path = os.path.join(PATH_CSV, "near_cars_car.csv")
         dataframe = pandas.read_csv(path)
 
         columns = list(dataframe.columns)
