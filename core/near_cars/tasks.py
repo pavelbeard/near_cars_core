@@ -86,7 +86,7 @@ def create_location_auto_update_task():
         print("the task already exists")
 
 
-@shared_task()
+@shared_task(name="update_car_location_repeat")
 def update_car_location():
     cache.set('location_count', models.Location.objects.all(), 70 * 20)
     locations = cache.get('location_count')
