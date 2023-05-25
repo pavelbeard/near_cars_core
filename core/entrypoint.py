@@ -40,11 +40,11 @@ def check_db(args, post_args: list, database: str, seconds: int = None, attempts
 if __name__ == '__main__':
     pre_args = [PYTHON_NAME, os.path.join(os.getenv('APP_HOME', os.getcwd()), "manage.py")]
 
-    check_db_result = check_db(pre_args, post_args=["checkdb", "--database"], database="near_cars")
+    check_db_result = check_db(pre_args, post_args=["checkdb", "--database"], database="default")
 
     if check_db_result or bool(int(os.getenv('DEBUG', 1))):
-        call_django_command(pre_args, ["migrate", "--database", "near_cars"])
-        call_django_command(pre_args, ["createsuperuser", "--database", "near_cars"
+        call_django_command(pre_args, ["migrate"])
+        call_django_command(pre_args, ["createsuperuser",
                                        "--username",
                                        os.getenv('DJANGO_SUPERUSER_USERNAME', "admin"),
                                        "--noinput", "--email",
