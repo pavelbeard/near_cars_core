@@ -4,7 +4,7 @@
 
 <h4>1. Как запустить сервис?</h4>
    <pre>
-      - git clone https://github.com/pavelbeard/near_cars_core/new/master
+      - git clone https://github.com/pavelbeard/near_cars_core
       - cd near_cars_core
       - docker-compose up -d --build
    </pre> 
@@ -52,3 +52,17 @@ POSTGRES_DB: имя базы данных PostgreSQL
 POSTGRES_USER: администратор БД
 POSTGRES_PASSWORD: пароль
 </pre>
+<h4>3. Документация</h4>
+Находится по адресу: 
+<pre>
+    http://<:api_address:port>/api/docs
+</pre>
+<h4>4. Команды</h4>
+Добавил следующие команды в manage.py: 
+<pre>
+    createtasks - Создает задачу обновления локаций у машин
+    addlocations - Добавляет локации в БД из csv файла
+    addcars - Добавляет машины в БД из csv файла
+    updatelocations - Обновляет локации у машин случайным образом
+</pre>
+

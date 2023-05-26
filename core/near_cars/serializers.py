@@ -24,8 +24,8 @@ class LocationSerializer(serializers.ModelSerializer):
 class PayloadSerializer(serializers.ModelSerializer):
     location_pickup = serializers.PrimaryKeyRelatedField(queryset=models.Location.objects.using(db).all())
     location_carry_on = serializers.PrimaryKeyRelatedField(queryset=models.Location.objects.using(db).all())
-    car_distances = serializers.ListField()
-    cars_count = serializers.IntegerField()
+    car_distances = serializers.ListField(read_only=True, required=False)
+    cars_count = serializers.IntegerField(read_only=True, required=False)
 
     class Meta:
         model = models.Payload

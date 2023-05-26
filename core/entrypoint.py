@@ -50,6 +50,9 @@ if __name__ == '__main__':
                                        "--noinput", "--email",
                                        os.getenv('DJANGO_SUPERUSER_EMAIL', "admin@example.com")])
         call_django_command(pre_args, ["collectstatic", "--noinput", "--clear"])
+        call_django_command(pre_args, ["createtasks"])
+        call_django_command(pre_args, ["addlocations"])
+        call_django_command(pre_args, ["addcars"])
 
         run_server = subprocess.Popen(
             ("gunicorn", "core.wsgi:application",

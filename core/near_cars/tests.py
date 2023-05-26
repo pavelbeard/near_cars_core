@@ -7,6 +7,7 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 from rest_framework import status
 
+import near_cars.management.commands.createtasks
 from near_cars.utils import car_id_generator, get_all_zip_codes, random_zip_code
 from . import models
 from . import tasks
@@ -19,14 +20,14 @@ class CeleryTasksTests(TestCase):
     databases = {"near_cars", "default"}
 
     def test_load_data_to_location_table(self):
-        result = tasks.load_data_to_location_table()
+        result = tasks.load_locations()
         self.assertEqual(result, True)
 
 
 class TestNearCars(TestCase):
-    databases = {"default", "near_cars"}
+    databases = {"default"}
 
-    fixtures = {"location.json", "car.json"}
+    # fixtures = {"location.json", "car.json"}
 
     @staticmethod
     def load_fixture_data():
@@ -100,4 +101,9 @@ class TestNearCars(TestCase):
         response = self.client.get(reverse("near_cars:create_payload"))
         print(response)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_createtasks_command(self):
+        command = near_cars.management.commands.createtasks.Command(print)
+        command.handle()
+        pass
 
